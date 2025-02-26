@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TULPA</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        canvas { position: absolute; top: 0; left: 0; }
+        .contact {
+            margin-top: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+        .contact:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <a href="mailto:info@tulpacorp.com" class="contact">CONTACT</a>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene = new THREE.Scene();
+        let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        let renderer = new THREE.WebGLRenderer({canvas: document.getElementById("canvas"), alpha: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        let geometry = new THREE.PlaneGeometry(5, 2, 20, 20);
+        let material = new THREE.ShaderMaterial({
+            vertexShader: `
+                uniform float time;
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    vec3 pos = position;
+                    pos.z += sin(pos.x * 2.0 + time) * 0.1;
+                    pos.z += sin(pos.y * 3.0 + time * 1.5) * 0.1;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vUv;
+                void main() {
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                }
+            `,
+            uniforms: {
+                time: { value: 0 }
+            },
+            wireframe: true
+        });
+
+        let plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            material.uniforms.time.value += 0.02;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
