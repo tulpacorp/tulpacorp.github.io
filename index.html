@@ -50,18 +50,47 @@
             let textGeometry = new THREE.TextGeometry('TULPA', {
                 font: font,
                 size: 2,
-                height: 0.5,
+                height: 0.2,
                 curveSegments: 12,
                 bevelEnabled: true,
-                bevelThickness: 0.1,
-                bevelSize: 0.1,
-                bevelSegments: 5
+                bevelThickness: 0.05,
+                bevelSize: 0.05,
+                bevelSegments: 3
             });
 
-            let textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true });
+            let textMaterial = new THREE.ShaderMaterial({
+                vertexShader: `
+                    uniform float time;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        vec3 pos = position;
+                        pos.z += sin(pos.x * 5.0 + time) * 0.2;
+                        pos.z += cos(pos.y * 5.0 + time) * 0.2;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                    }
+                `,
+                uniforms: {
+                    time: { value: 0 }
+                }
+            });
+
             let textMesh = new THREE.Mesh(textGeometry, textMaterial);
             textMesh.position.set(-4, 0, 0);
             scene.add(textMesh);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                textMaterial.uniforms.time.value += 0.05;
+                renderer.render(scene, camera);
+            }
+            animate();
         });
 
         let light = new THREE.PointLight(0xffffff, 1, 100);
@@ -75,12 +104,6 @@
             camera.position.x += (mouseX * 0.1 - camera.position.x) * 0.1;
             camera.position.y += (mouseY * 0.1 - camera.position.y) * 0.1;
         });
-
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-        animate();
     </script>
 </body>
 </html>
