@@ -16,10 +16,12 @@
             color: #fff;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
+            position: relative;
         }
         canvas { position: absolute; top: 0; left: 0; }
         .contact {
-            margin-top: 20px;
+            position: absolute;
+            bottom: 20px;
             font-size: 14px;
             text-transform: uppercase;
             text-decoration: none;
@@ -43,38 +45,39 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        let geometry = new THREE.PlaneGeometry(5, 2, 20, 20);
-        let material = new THREE.ShaderMaterial({
-            vertexShader: `
-                uniform float time;
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    vec3 pos = position;
-                    pos.z += sin(pos.x * 2.0 + time) * 0.1;
-                    pos.z += sin(pos.y * 3.0 + time * 1.5) * 0.1;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                }
-            `,
-            fragmentShader: `
-                varying vec2 vUv;
-                void main() {
-                    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-                }
-            `,
-            uniforms: {
-                time: { value: 0 }
-            },
-            wireframe: true
+        let loader = new THREE.FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+            let textGeometry = new THREE.TextGeometry('TULPA', {
+                font: font,
+                size: 2,
+                height: 0.5,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.1,
+                bevelSize: 0.1,
+                bevelSegments: 5
+            });
+
+            let textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true });
+            let textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-4, 0, 0);
+            scene.add(textMesh);
         });
 
-        let plane = new THREE.Mesh(geometry, material);
-        scene.add(plane);
-        camera.position.z = 5;
+        let light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 10, 10);
+        scene.add(light);
+
+        camera.position.z = 10;
+        document.addEventListener('mousemove', (event) => {
+            let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            let mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            camera.position.x += (mouseX * 0.1 - camera.position.x) * 0.1;
+            camera.position.y += (mouseY * 0.1 - camera.position.y) * 0.1;
+        });
 
         function animate() {
             requestAnimationFrame(animate);
-            material.uniforms.time.value += 0.02;
             renderer.render(scene, camera);
         }
         animate();
