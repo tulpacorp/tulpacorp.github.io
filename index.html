@@ -12,31 +12,18 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000;
+            background: url('https://source.unsplash.com/random/1920x1080/?satellite') no-repeat center center fixed;
+            background-size: cover;
             color: #fff;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
             position: relative;
         }
         canvas { position: absolute; top: 0; left: 0; }
-        .contact {
-            position: absolute;
-            bottom: 20px;
-            font-size: 14px;
-            text-transform: uppercase;
-            text-decoration: none;
-            color: #aaa;
-            transition: color 0.3s ease;
-            cursor: pointer;
-        }
-        .contact:hover {
-            color: #fff;
-        }
     </style>
 </head>
-<body>
+<body onclick="window.location.href='mailto:info@tulpacorp.com'">
     <canvas id="canvas"></canvas>
-    <a href="mailto:info@tulpacorp.com" class="contact">CONTACT</a>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
