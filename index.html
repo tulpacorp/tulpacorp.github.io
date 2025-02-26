@@ -27,6 +27,7 @@
             text-decoration: none;
             color: #aaa;
             transition: color 0.3s ease;
+            cursor: pointer;
         }
         .contact:hover {
             color: #fff;
@@ -45,6 +46,12 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        let mouse = { x: 0, y: 0 };
+        document.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
         let loader = new THREE.FontLoader();
         loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
             let textGeometry = new THREE.TextGeometry('TULPA', {
@@ -61,12 +68,15 @@
             let textMaterial = new THREE.ShaderMaterial({
                 vertexShader: `
                     uniform float time;
+                    uniform vec2 mouse;
                     varying vec2 vUv;
                     void main() {
                         vUv = uv;
                         vec3 pos = position;
+                        float dist = distance(vec2(pos.x, pos.y), mouse);
                         pos.z += sin(pos.x * 5.0 + time) * 0.2;
                         pos.z += cos(pos.y * 5.0 + time) * 0.2;
+                        pos.z += sin(dist * 10.0) * 0.2;
                         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                     }
                 `,
@@ -77,7 +87,8 @@
                     }
                 `,
                 uniforms: {
-                    time: { value: 0 }
+                    time: { value: 0 },
+                    mouse: { value: new THREE.Vector2(0, 0) }
                 }
             });
 
@@ -88,6 +99,7 @@
             function animate() {
                 requestAnimationFrame(animate);
                 textMaterial.uniforms.time.value += 0.05;
+                textMaterial.uniforms.mouse.value.set(mouse.x * 2, mouse.y * 2);
                 renderer.render(scene, camera);
             }
             animate();
@@ -98,12 +110,6 @@
         scene.add(light);
 
         camera.position.z = 10;
-        document.addEventListener('mousemove', (event) => {
-            let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            let mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-            camera.position.x += (mouseX * 0.1 - camera.position.x) * 0.1;
-            camera.position.y += (mouseY * 0.1 - camera.position.y) * 0.1;
-        });
     </script>
 </body>
 </html>
