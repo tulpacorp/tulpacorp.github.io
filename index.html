@@ -25,34 +25,41 @@
             font-size: 14px;
             text-transform: uppercase;
             text-decoration: none;
-            background: #fff;
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 5px;
+            color: #fff;
             cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: opacity 0.3s ease;
             z-index: 10;
         }
-        .contact:hover {
-            background: #aaa;
+        .tooltip {
+            position: absolute;
+            bottom: 50px;
+            background: rgba(255, 255, 255, 0.9);
             color: #000;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
     <div class="contact" onclick="revealEmail()">CONTACT</div>
+    <div class="tooltip" id="tooltip">Email copied to clipboard!</div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         function revealEmail() {
             let contactDiv = document.querySelector('.contact');
+            let tooltip = document.getElementById('tooltip');
             let email = "info@tulpacorp.com";
             contactDiv.innerText = email;
             navigator.clipboard.writeText(email).then(() => {
-                contactDiv.style.background = '#000';
-                contactDiv.style.color = '#fff';
-                alert('Email copied to clipboard!');
+                tooltip.style.opacity = "1";
+                setTimeout(() => {
+                    tooltip.style.opacity = "0";
+                }, 2000);
             });
         }
 
