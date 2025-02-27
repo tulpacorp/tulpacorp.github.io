@@ -19,13 +19,40 @@
             position: relative;
         }
         canvas { position: absolute; top: 0; left: 0; }
+        .contact {
+            position: absolute;
+            bottom: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #fff;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .contact:hover {
+            background: #aaa;
+            color: #000;
+        }
     </style>
 </head>
-<body onclick="window.location.href='mailto:info@tulpacorp.com'">
+<body>
     <canvas id="canvas"></canvas>
+    <div class="contact" onclick="revealEmail()">CONTACT</div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        function revealEmail() {
+            let contactDiv = document.querySelector('.contact');
+            let email = "info@tulpacorp.com";
+            contactDiv.innerText = email;
+            navigator.clipboard.writeText(email).then(() => {
+                alert('Email copied to clipboard!');
+            });
+        }
+
         let scene = new THREE.Scene();
         let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         let renderer = new THREE.WebGLRenderer({canvas: document.getElementById("canvas"), alpha: true});
