@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>TULPA</title>
     <style>
         body {
@@ -20,19 +20,25 @@
         }
         canvas { position: absolute; top: 0; left: 0; }
         .contact {
-            position: absolute;
-            bottom: 20px;
-            font-size: 14px;
+            position: fixed;
+            bottom: 10vh;
+            font-size: 16px;
             text-transform: uppercase;
             text-decoration: none;
             color: #fff;
             cursor: pointer;
             transition: opacity 0.3s ease;
             z-index: 10;
+            padding: 10px;
+            text-align: center;
+            width: 80vw;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
         }
         .tooltip {
-            position: absolute;
-            bottom: 50px;
+            position: fixed;
+            bottom: 20vh;
             background: rgba(255, 255, 255, 0.9);
             color: #000;
             padding: 5px 10px;
