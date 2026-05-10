@@ -2,86 +2,419 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TULPA</title>
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-32x32.png">
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+ 
     <style>
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --muted: rgba(255, 255, 255, 0.55);
+            --faint: rgba(255, 255, 255, 0.35);
+            --line: rgba(255, 255, 255, 0.12);
+            --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+            --font-serif: 'Instrument Serif', Georgia, serif;
+        }
+ 
+        * { box-sizing: border-box; }
+ 
+        html, body { margin: 0; padding: 0; }
+ 
         body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-sans);
+            font-size: 17px;
+            font-weight: 300;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+ 
+        a { color: inherit; text-decoration: none; }
+ 
+        /* ---------- HERO ---------- */
+        .hero {
             position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 520px;
+            overflow: hidden;
         }
-        canvas { position: absolute; top: 0; left: 0; }
-        .contact {
-            position: fixed;
-            bottom: 10vh;
-            font-size: 16px;
+ 
+        /* Canvas mirrors the original: positioned absolute, top/left 0.
+           Renderer sets the canvas drawing buffer to window size, which
+           inside a 100vh/100vw hero matches the viewport exactly. */
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+        }
+ 
+        .hero-meta {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            text-decoration: none;
-            color: #fff;
-            cursor: pointer;
-            transition: opacity 0.3s ease;
+            color: var(--muted);
             z-index: 10;
-            padding: 10px;
-            text-align: center;
-            width: 80vw;
-            max-width: 300px;
-            
-            border-radius: 5px;
+            pointer-events: none;
         }
+ 
+        .scroll-cue {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+            z-index: 10;
+            animation: bob 2.4s ease-in-out infinite;
+        }
+        .scroll-arrow {
+            display: inline-block;
+            margin-left: 6px;
+            letter-spacing: 0;
+        }
+        @keyframes bob {
+            0%, 100% { transform: translate(-50%, 0); opacity: 0.6; }
+            50%      { transform: translate(-50%, 6px); opacity: 1; }
+        }
+ 
+        /* ---------- LAYOUT ---------- */
+        .wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+ 
+        section.block {
+            padding: 96px 0;
+            border-top: 1px solid var(--line);
+        }
+ 
+        .label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin: 0 0 40px 0;
+            font-weight: 400;
+        }
+ 
+        h3 {
+            font-family: var(--font-sans);
+            font-weight: 400;
+            font-size: 19px;
+            margin: 0 0 14px 0;
+            letter-spacing: -0.005em;
+        }
+ 
+        p {
+            font-size: 17px;
+            line-height: 1.6;
+            margin: 0 0 22px 0;
+            color: rgba(255,255,255,0.88);
+            max-width: 60ch;
+        }
+        p:last-child { margin-bottom: 0; }
+ 
+        p a {
+            border-bottom: 1px solid var(--faint);
+            padding-bottom: 1px;
+            transition: border-color 0.2s ease;
+        }
+        p a:hover { border-color: var(--fg); }
+ 
+        /* ---------- TEAM ---------- */
+        .person { margin-bottom: 56px; }
+        .person:last-child { margin-bottom: 0; }
+ 
+        .person-name {
+            font-family: var(--font-sans);
+            font-weight: 400;
+            font-size: 19px;
+            margin: 0 0 4px 0;
+        }
+        .person-role {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin: 0 0 18px 0;
+        }
+ 
+        /* ---------- ARTIFICE PROJECT ---------- */
+        .project-title {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 400;
+            font-size: 44px;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin: 0 0 28px 0;
+        }
+ 
+        .learn-more {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 13px 22px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--fg);
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .learn-more:hover {
+            background: var(--fg);
+            color: var(--bg);
+            border-color: var(--fg);
+        }
+        .learn-more .arrow {
+            display: inline-block;
+            margin-left: 8px;
+            transition: transform 0.2s ease;
+        }
+        .learn-more:hover .arrow { transform: translateX(3px); }
+ 
+        /* ---------- CLIENTS ---------- */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+        }
+        .client {
+            aspect-ratio: 1;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 12px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--faint);
+            transition: color 0.2s ease;
+            line-height: 1.5;
+        }
+        .client:hover { color: var(--fg); }
+ 
+        /* ---------- FOOTER ---------- */
+        footer {
+            padding: 80px 28px 60px;
+            border-top: 1px solid var(--line);
+            text-align: center;
+        }
+        .contact-line {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+        .contact-email {
+            font-family: var(--font-sans);
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--fg);
+            cursor: pointer;
+            border-bottom: 1px solid var(--faint);
+            padding-bottom: 2px;
+            transition: border-color 0.2s ease;
+            display: inline-block;
+        }
+        .contact-email:hover { border-color: var(--fg); }
+ 
+        .colophon {
+            margin-top: 60px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+ 
+        /* ---------- TOOLTIP ---------- */
         .tooltip {
             position: fixed;
-            bottom: 20vh;
-            background: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--fg);
+            color: var(--bg);
+            padding: 8px 14px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
+            z-index: 50;
+            pointer-events: none;
+        }
+        .tooltip.show { opacity: 1; }
+ 
+        /* ---------- REVEAL ON SCROLL ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+ 
+        /* ---------- MOBILE ---------- */
+        @media (max-width: 640px) {
+            body { font-size: 16px; }
+            section.block { padding: 72px 0; }
+            .wrap { padding: 0 22px; }
+            p { font-size: 16px; }
+            .project-title { font-size: 32px; }
+            .contact-email { font-size: 18px; }
+            .clients-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-meta { font-size: 10px; }
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="contact" onclick="revealEmail()">CONTACT</div>
-    <div class="tooltip" id="tooltip">Email copied to clipboard</div>
-    
+ 
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+        <canvas id="canvas"></canvas>
+        <div class="hero-meta">
+            <span>TULPA — Design Research &amp; Consultancy</span>
+            <span>California · New York</span>
+        </div>
+        <div class="scroll-cue">More Info <span class="scroll-arrow">↓</span></div>
+    </section>
+ 
+    <!-- ============ ABOUT ============ -->
+    <section class="block" id="about">
+        <div class="wrap reveal">
+            <h2 class="label">About</h2>
+            <p>TULPA is a design research and consultancy practice working across architecture, language, craft, and technology. We help clients translate cultural and technical complexity into strategy, identity, and form.</p>
+            <p>Our work moves fluidly between speculative research and applied practice — building frameworks that make new ideas legible, and giving emerging concepts the shape they need to enter the world.</p>
+            <p>We are based in California and New York. Reach us at <a href="mailto:info@tulpacorp.com">info@tulpacorp.com</a>.</p>
+        </div>
+    </section>
+ 
+    <!-- ============ TEAM ============ -->
+    <section class="block" id="team">
+        <div class="wrap reveal">
+            <h2 class="label">Team</h2>
+ 
+            <div class="person">
+                <div class="person-name">Nima Shariat Zamanpour</div>
+                <div class="person-role">Co-Founder</div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+ 
+            <div class="person">
+                <div class="person-name">Brian Christopher Orser</div>
+                <div class="person-role">Co-Founder</div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- ============ ARTIFICE PROJECT ============ -->
+    <section class="block" id="artifice">
+        <div class="wrap reveal">
+            <h2 class="label">Project</h2>
+            <h3 class="project-title">art-ifice</h3>
+            <p>art-ifice is a transmedial research group and art practice formed within TULPA by Nima Shariat Zamanpour and Brian Christopher Orser. The collaboration weaves conceptual and technical connections between architecture, language, craft, and technology.</p>
+            <p>An emphasis on workflows and processes carries the work from one medium to the next, opening various doors into the domain of space as it is constructed historically and digitally — from classical orders to machine-learned form.</p>
+            <a class="learn-more" href="https://www.art-ifice.info/" target="_blank" rel="noopener">
+                Visit Project <span class="arrow">→</span>
+            </a>
+        </div>
+    </section>
+ 
+    <!-- ============ CLIENTS ============ -->
+    <section class="block" id="clients">
+        <div class="wrap reveal">
+            <h2 class="label">Clients &amp; Collaborators</h2>
+            <div class="clients-grid">
+                <div class="client">MIT</div>
+                <div class="client">Yale School of Architecture</div>
+                <div class="client">Cloudflare</div>
+                <div class="client">Miller Rodat Studios</div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- ============ FOOTER ============ -->
+    <footer>
+        <div class="contact-line">Get in touch</div>
+        <a class="contact-email" id="contact-email" onclick="revealEmail()">Contact</a>
+        <div class="colophon">TULPA Corp.</div>
+    </footer>
+ 
+    <div class="tooltip" id="tooltip">Email copied</div>
+ 
+    <!-- ============ THREE.JS LOGO (original code, untouched) ============ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         function revealEmail() {
-            let contactDiv = document.querySelector('.contact');
-            let tooltip = document.getElementById('tooltip');
-            let email = "info@tulpacorp.com";
-            contactDiv.innerText = email;
-            navigator.clipboard.writeText(email).then(() => {
-                tooltip.style.opacity = "1";
-                setTimeout(() => {
-                    tooltip.style.opacity = "0";
-                }, 2000);
-            });
+            const email = "info@tulpacorp.com";
+            const btn = document.getElementById('contact-email');
+            const tooltip = document.getElementById('tooltip');
+ 
+            // Swap the label from "Contact" to the address on first click
+            btn.innerText = email;
+ 
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(() => {
+                    tooltip.classList.add('show');
+                    setTimeout(() => tooltip.classList.remove('show'), 1800);
+                }).catch(() => {
+                    window.location.href = "mailto:" + email;
+                });
+            } else {
+                window.location.href = "mailto:" + email;
+            }
         }
-
+ 
         let scene = new THREE.Scene();
         let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         let renderer = new THREE.WebGLRenderer({canvas: document.getElementById("canvas"), alpha: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
+ 
         let mouse = { x: 0, y: 0 };
         document.addEventListener('mousemove', (event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         });
-
+ 
         let loader = new THREE.FontLoader();
         loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
             let textGeometry = new THREE.TextGeometry('TULPA', {
@@ -94,7 +427,7 @@
                 bevelSize: 0.05,
                 bevelSegments: 3
             });
-
+ 
             let textMaterial = new THREE.ShaderMaterial({
                 vertexShader: `
                     uniform float time;
@@ -121,11 +454,11 @@
                     mouse: { value: new THREE.Vector2(0, 0) }
                 }
             });
-
+ 
             let textMesh = new THREE.Mesh(textGeometry, textMaterial);
             textMesh.position.set(-4, 0, 0);
             scene.add(textMesh);
-
+ 
             function animate() {
                 requestAnimationFrame(animate);
                 textMaterial.uniforms.time.value += 0.05;
@@ -134,12 +467,32 @@
             }
             animate();
         });
-
+ 
         let light = new THREE.PointLight(0xffffff, 1, 100);
         light.position.set(0, 10, 10);
         scene.add(light);
-
+ 
         camera.position.z = 10;
+ 
+        // Keep canvas matched to window on resize (original was static; this
+        // is the one safe addition since the page now scrolls)
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+ 
+        // ---- Scroll reveal ----
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+ 
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
