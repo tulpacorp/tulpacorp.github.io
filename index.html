@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TULPA</title>
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-32x32.png">
- 
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
- 
+
     <style>
         :root {
             --bg: #000;
@@ -21,11 +21,11 @@
             --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
             --font-serif: 'Instrument Serif', Georgia, serif;
         }
- 
+
         * { box-sizing: border-box; }
- 
+
         html, body { margin: 0; padding: 0; }
- 
+
         body {
             background-color: var(--bg);
             color: var(--fg);
@@ -36,9 +36,9 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
- 
+
         a { color: inherit; text-decoration: none; }
- 
+
         /* ---------- HERO ---------- */
         .hero {
             position: relative;
@@ -47,7 +47,7 @@
             min-height: 520px;
             overflow: hidden;
         }
- 
+
         /* Canvas mirrors the original: positioned absolute, top/left 0.
            Renderer sets the canvas drawing buffer to window size, which
            inside a 100vh/100vw hero matches the viewport exactly. */
@@ -57,7 +57,7 @@
             left: 0;
             display: block;
         }
- 
+
         .hero-meta {
             position: absolute;
             top: 24px;
@@ -73,7 +73,7 @@
             z-index: 10;
             pointer-events: none;
         }
- 
+
         .scroll-cue {
             position: absolute;
             bottom: 28px;
@@ -96,19 +96,19 @@
             0%, 100% { transform: translate(-50%, 0); opacity: 0.6; }
             50%      { transform: translate(-50%, 6px); opacity: 1; }
         }
- 
+
         /* ---------- LAYOUT ---------- */
         .wrap {
             max-width: 780px;
             margin: 0 auto;
             padding: 0 28px;
         }
- 
+
         section.block {
             padding: 96px 0;
             border-top: 1px solid var(--line);
         }
- 
+
         .label {
             font-family: var(--font-mono);
             font-size: 11px;
@@ -118,7 +118,7 @@
             margin: 0 0 40px 0;
             font-weight: 400;
         }
- 
+
         h3 {
             font-family: var(--font-sans);
             font-weight: 400;
@@ -126,7 +126,7 @@
             margin: 0 0 14px 0;
             letter-spacing: -0.005em;
         }
- 
+
         p {
             font-size: 17px;
             line-height: 1.6;
@@ -135,18 +135,18 @@
             max-width: 60ch;
         }
         p:last-child { margin-bottom: 0; }
- 
+
         p a {
             border-bottom: 1px solid var(--faint);
             padding-bottom: 1px;
             transition: border-color 0.2s ease;
         }
         p a:hover { border-color: var(--fg); }
- 
+
         /* ---------- TEAM ---------- */
         .person { margin-bottom: 56px; }
         .person:last-child { margin-bottom: 0; }
- 
+
         .person-name {
             font-family: var(--font-sans);
             font-weight: 400;
@@ -161,7 +161,26 @@
             color: var(--faint);
             margin: 0 0 18px 0;
         }
- 
+
+        .collaborators {
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid var(--line);
+        }
+        .collaborators-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin-bottom: 10px;
+        }
+        .collaborators-list {
+            font-size: 17px;
+            color: rgba(255,255,255,0.88);
+            margin: 0;
+        }
+
         /* ---------- ARTIFICE PROJECT ---------- */
         .project-title {
             font-family: var(--font-serif);
@@ -172,7 +191,7 @@
             letter-spacing: -0.01em;
             margin: 0 0 28px 0;
         }
- 
+
         .learn-more {
             display: inline-block;
             margin-top: 14px;
@@ -196,7 +215,7 @@
             transition: transform 0.2s ease;
         }
         .learn-more:hover .arrow { transform: translateX(3px); }
- 
+
         /* ---------- CLIENTS ---------- */
         .clients-grid {
             display: grid;
@@ -222,7 +241,7 @@
             line-height: 1.5;
         }
         .client:hover { color: var(--fg); }
- 
+
         /* ---------- FOOTER ---------- */
         footer {
             padding: 80px 28px 60px;
@@ -249,7 +268,7 @@
             display: inline-block;
         }
         .contact-email:hover { border-color: var(--fg); }
- 
+
         .colophon {
             margin-top: 60px;
             font-family: var(--font-mono);
@@ -258,7 +277,7 @@
             text-transform: uppercase;
             color: var(--faint);
         }
- 
+
         /* ---------- TOOLTIP ---------- */
         .tooltip {
             position: fixed;
@@ -278,7 +297,7 @@
             pointer-events: none;
         }
         .tooltip.show { opacity: 1; }
- 
+
         /* ---------- REVEAL ON SCROLL ---------- */
         .reveal {
             opacity: 0;
@@ -289,7 +308,7 @@
             opacity: 1;
             transform: translateY(0);
         }
- 
+
         /* ---------- MOBILE ---------- */
         @media (max-width: 640px) {
             body { font-size: 16px; }
@@ -304,7 +323,7 @@
     </style>
 </head>
 <body>
- 
+
     <!-- ============ HERO ============ -->
     <section class="hero">
         <canvas id="canvas"></canvas>
@@ -314,55 +333,61 @@
         </div>
         <div class="scroll-cue">More Info <span class="scroll-arrow">↓</span></div>
     </section>
- 
+
     <!-- ============ ABOUT ============ -->
     <section class="block" id="about">
         <div class="wrap reveal">
             <h2 class="label">About</h2>
             <p>TULPA is a design research and consultancy practice working across architecture, language, craft, and technology. We help clients translate cultural and technical complexity into strategy, identity, and form.</p>
-            <p>Our work moves fluidly between speculative research and applied practice — building frameworks that make new ideas legible, and giving emerging concepts the shape they need to enter the world.</p>
             <p>We are based in California and New York. Reach us at <a href="mailto:info@tulpacorp.com">info@tulpacorp.com</a>.</p>
         </div>
     </section>
- 
+
     <!-- ============ TEAM ============ -->
     <section class="block" id="team">
         <div class="wrap reveal">
             <h2 class="label">Team</h2>
- 
-            <div class="person">
-                <div class="person-name">Nima Shariat Zamanpour</div>
-                <div class="person-role">Co-Founder</div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
- 
+
             <div class="person">
                 <div class="person-name">Brian Christopher Orser</div>
                 <div class="person-role">Co-Founder</div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Brian is a partner at WO-R+D_S, developing connections among architecture, technology, and art history. Projects range from planning and design of buildings to writing on the entangled architectural histories of modernism and nationalism. He is an editor of Perspecta, the Yale architectural journal, along with Alex Whee Kim, Sarah Kim, and M.C. Overholt, addressing the architectural archive and decolonial approaches to the past. </p>
+                <p>With a Master of Architecture degree from Yale University and a Bachelor of Arts degree in Philosophy from Pitzer College, Claremont, Brian combines his design and analytical skills to produce work at once rigorous and delightful, thoughtful and expressive. Brian has worked at architecture firms in NYC and California. He has served as a lecturer at Yale and UC Berkeley, and as a critic at Harvard GSD and Boston Architectural College. He also sits on the board of Paprika!, a student-run publication that fosters critical discourse on architecture and urbanism. </p>
+            </div>
+
+            <div class="person">
+                <div class="person-name">Nima Shariat Zamanpour</div>
+                <div class="person-role">Co-Founder</div>
+                <p>Nima Shariat Zamanpour is an architect, artist, and educator based in New York City. Currently a project manager for Special Projects at The Metropolitan Museum of Art, he also co-founded TULPA, a research group examining the intersection of architecture, language, craft, and technology. His architectural practice centers on institutional projects, campus design, and urban planning.</p>
+                <p>Nima holds a Master of Architecture from the Harvard Graduate School of Design and Bachelor's degrees in Computer Science, Economics, and Art from UC Santa Cruz. He has taught at the Yale School of Architecture, RISD, the BAC, and Wentworth, and has lectured at Harvard and UW-Milwaukee. His research and expertise spans across computational graphics, AI, survivalist culture, simulations, and Science and Technology Studies (STS).</p>
+            </div>
+
+
+
+            <div class="collaborators">
+                <div class="collaborators-label">Collaborators</div>
+                <p class="collaborators-list">Mianwei Wang, Ami Kurosaki</p>
             </div>
         </div>
     </section>
- 
+
     <!-- ============ ARTIFICE PROJECT ============ -->
     <section class="block" id="artifice">
         <div class="wrap reveal">
             <h2 class="label">Project</h2>
             <h3 class="project-title">art-ifice</h3>
-            <p>art-ifice is a transmedial research group and art practice formed within TULPA by Nima Shariat Zamanpour and Brian Christopher Orser. The collaboration weaves conceptual and technical connections between architecture, language, craft, and technology.</p>
-            <p>An emphasis on workflows and processes carries the work from one medium to the next, opening various doors into the domain of space as it is constructed historically and digitally — from classical orders to machine-learned form.</p>
+            <p>art-ifice is an art practice formed within TULPA by Nima Shariat Zamanpour and Brian Christopher Orser. The collaboration weaves conceptual and technical connections across mediums.</p>
+            <p>An emphasis on workflows and processes carries the work from one medium to the next, opening various doors into the domain of space as it is constructed historically and digitally, from classical orders to machine-learned form.</p>
             <a class="learn-more" href="https://www.art-ifice.info/" target="_blank" rel="noopener">
                 Visit Project <span class="arrow">→</span>
             </a>
         </div>
     </section>
- 
+
     <!-- ============ CLIENTS ============ -->
     <section class="block" id="clients">
         <div class="wrap reveal">
-            <h2 class="label">Clients &amp; Collaborators</h2>
+            <h2 class="label">Clients</h2>
             <div class="clients-grid">
                 <div class="client">MIT</div>
                 <div class="client">Yale School of Architecture</div>
@@ -371,16 +396,16 @@
             </div>
         </div>
     </section>
- 
+
     <!-- ============ FOOTER ============ -->
     <footer>
         <div class="contact-line">Get in touch</div>
         <a class="contact-email" id="contact-email" onclick="revealEmail()">Contact</a>
         <div class="colophon">TULPA Corp.</div>
     </footer>
- 
+
     <div class="tooltip" id="tooltip">Email copied</div>
- 
+
     <!-- ============ THREE.JS LOGO (original code, untouched) ============ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -388,10 +413,10 @@
             const email = "info@tulpacorp.com";
             const btn = document.getElementById('contact-email');
             const tooltip = document.getElementById('tooltip');
- 
+
             // Swap the label from "Contact" to the address on first click
             btn.innerText = email;
- 
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(email).then(() => {
                     tooltip.classList.add('show');
@@ -403,18 +428,18 @@
                 window.location.href = "mailto:" + email;
             }
         }
- 
+
         let scene = new THREE.Scene();
         let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         let renderer = new THREE.WebGLRenderer({canvas: document.getElementById("canvas"), alpha: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
- 
+
         let mouse = { x: 0, y: 0 };
         document.addEventListener('mousemove', (event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         });
- 
+
         let loader = new THREE.FontLoader();
         loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
             let textGeometry = new THREE.TextGeometry('TULPA', {
@@ -427,7 +452,7 @@
                 bevelSize: 0.05,
                 bevelSegments: 3
             });
- 
+
             let textMaterial = new THREE.ShaderMaterial({
                 vertexShader: `
                     uniform float time;
@@ -454,11 +479,11 @@
                     mouse: { value: new THREE.Vector2(0, 0) }
                 }
             });
- 
+
             let textMesh = new THREE.Mesh(textGeometry, textMaterial);
             textMesh.position.set(-4, 0, 0);
             scene.add(textMesh);
- 
+
             function animate() {
                 requestAnimationFrame(animate);
                 textMaterial.uniforms.time.value += 0.05;
@@ -467,13 +492,13 @@
             }
             animate();
         });
- 
+
         let light = new THREE.PointLight(0xffffff, 1, 100);
         light.position.set(0, 10, 10);
         scene.add(light);
- 
+
         camera.position.z = 10;
- 
+
         // Keep canvas matched to window on resize (original was static; this
         // is the one safe addition since the page now scrolls)
         window.addEventListener('resize', () => {
@@ -481,7 +506,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
- 
+
         // ---- Scroll reveal ----
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -491,7 +516,7 @@
                 }
             });
         }, { threshold: 0.15 });
- 
+
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
